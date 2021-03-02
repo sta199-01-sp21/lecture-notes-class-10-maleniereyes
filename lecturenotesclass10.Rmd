@@ -75,7 +75,7 @@ marbles <- c("red", "red", "white", "red", "blue", "blue", "red", "blue")
 
 Suppose we draw a single marble from our imaginary box, where all the marbles
 are equally likely to be selected. What is the probability the marble is blue? 
-How about white?
+How about white? blue: 3/8, white: 1/8
 
 We can simulate this "drawing" with the `sample()` function.
 
@@ -101,7 +101,8 @@ counts <- table(draw_results)
 prop.table(counts)
 ```
 
-How close is this value to the "true" probability?
+How close is this value to the "true" probability? 
+It is extremely close to the "true" probability. 
 
 **To summarize our process:**
 
@@ -118,6 +119,7 @@ color if we make two draws with replacement? We haven't discussed how to
 compute this theoretically yet, but this is what computers are good at.
 
 Before we do this, what is your guess as to what the probability will be?
+less likely than half, not very likely in general
 
 We'll still use `sample()` to run our simulation many times, but we'll
 use `dplyr` functions to compute the relative frequencies.
@@ -131,7 +133,7 @@ two_draw_results
 ```
 
 How can we add a variable to `two_draw_results` to see if `draw_1` and `draw_2`
-match?
+match? 
 
 ```{r identify_matches}
 two_draw_results <- two_draw_results %>% 
@@ -156,18 +158,27 @@ difference between dice roll 1 and dice roll 2 is equal to 4.
 
 Perform a simulation to compute this empirical probability.
 
-Write down your guess to the answer before you calculate it.
+Write down your guess to the answer before you calculate it. 
+the square of dice roll 1 is equal to dice roll 2
 
 ```{r simulate_rolls}
-
+roll_results <- tibble(
+  die_1 = replicate(n = 10000, expr = sample(1:6, size = 1)),
+  die_2 = replicate(n = 10000, expr = sample(1:6, size = 1))
+)
 ```
 
 ```{r identify_events}
-
+roll_results <- roll_results %>%
+  mutate(event_1 = die_1 ^ 2 == die_2,
+         event_2 = abs(die_1 - die_2) == 4)
+roll_results
 ```
 
 ```{r summarize_rolls}
-
+roll_results %>%
+  summarise(event_1_prob = mean(event_1),
+            event_2_prob = mean(event_2))
 ```
 
 ## Additional Resources-please look at before Weds.
